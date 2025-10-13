@@ -114,8 +114,8 @@
 
         <!-- Totals Section -->
         <div class="bg-gray-800 shadow-lg rounded-xl p-6 mb-8 sticky top-4 z-10 border border-gray-700">
-            <h2 class="text-xl font-semibold mb-4 text-white">Total Resources Needed for Spawns Plus Upgrades</h2>
-            <div id="totals" class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+            <h2 class="text-xl font-semibold mb-4 text-white">Net Resources To Acquire</h2>
+            <div id="totals" class="grid grid-cols-2 sm-grid-cols-4 gap-4 text-center">
                 <div class="bg-gray-700 p-4 rounded-lg">
                     <span class="text-2xl font-bold text-purple-400" id="total-orbs">0</span>
                     <span class="block text-sm text-gray-300">Orbs</span>
@@ -205,110 +205,9 @@
             const spawnCostFlamesEl = document.getElementById('spawn-cost-flames');
             const spawnCostCrystalsEl = document.getElementById('spawn-cost-crystals');
             const spawnCostStarsEl = document.getElementById('spawn-cost-stars');
-
-            function getProductionPlan(needed) {
-                const flamesPerNetherling = parseInt(flamesPerNetherlingInput.value) || 0;
-                const crystalsPerDemon = parseInt(crystalsPerDemonInput.value) || 0;
-                const starsPerMountain = parseInt(starsPerMountainInput.value) || 0;
-
-                let numMountains = 0, crystalsForMountains = 0;
-                if (needed.stars > 0 && starsPerMountain > 0) {
-                    numMountains = Math.ceil(needed.stars / starsPerMountain);
-                    crystalsForMountains = numMountains * 12;
-                }
-                
-                const totalCrystalsNeeded = needed.crystals + crystalsForMountains;
-                let numDemons = 0, flamesForDemons = 0, orbsForDemons = 0;
-                if (totalCrystalsNeeded > 0 && crystalsPerDemon > 0) {
-                    numDemons = Math.ceil(totalCrystalsNeeded / crystalsPerDemon);
-                    flamesForDemons = numDemons * 10;
-                    orbsForDemons = numDemons * 3;
-                }
-
-                const totalFlamesNeeded = needed.flames + flamesForDemons;
-                let numNetherlings = 0, orbsForNetherlings = 0;
-                if (totalFlamesNeeded > 0 && flamesPerNetherling > 0) {
-                    numNetherlings = Math.ceil(totalFlamesNeeded / flamesPerNetherling);
-                    orbsForNetherlings = numNetherlings * 1;
-                }
-
-                return {
-                    numMountains, crystalsForMountains,
-                    numDemons, flamesForDemons, orbsForDemons, totalCrystalsNeeded,
-                    numNetherlings, orbsForNetherlings, totalFlamesNeeded
-                };
-            }
-
-            function calculateAndDisplaySpawnCosts(needed) {
-                const plan = getProductionPlan(needed);
-                
-                const totalSpawnCost = {
-                    orbs: plan.orbsForDemons + plan.orbsForNetherlings,
-                    flames: plan.flamesForDemons,
-                    crystals: plan.crystalsForMountains,
-                    stars: 0
-                };
-
-                // Update the DOM for the dedicated spawn cost section
-                spawnCostOrbsEl.textContent = totalSpawnCost.orbs.toLocaleString();
-                spawnCostFlamesEl.textContent = totalSpawnCost.flames.toLocaleString();
-                spawnCostCrystalsEl.textContent = totalSpawnCost.crystals.toLocaleString();
-                spawnCostStarsEl.textContent = '0';
-                
-                return totalSpawnCost;
-            }
             
-            function generateStrategyText(needed) {
-                const flamesPerNetherling = parseInt(flamesPerNetherlingInput.value) || 0;
-                const crystalsPerDemon = parseInt(crystalsPerDemonInput.value) || 0;
-                const starsPerMountain = parseInt(starsPerMountainInput.value) || 0;
-                let steps = [];
-
-                const totalNeededValue = Object.values(needed).reduce((a, b) => a + b, 0);
-                if (totalNeededValue === 0) {
-                    strategyTextEl.innerHTML = '<p>You have all the resources for the selected upgrades!</p>';
-                    return;
-                }
-
-                const plan = getProductionPlan(needed);
-
-                if (needed.stars > 0) {
-                    if (starsPerMountain <= 0) {
-                        steps.push(`<p class="text-red-400">You need ${needed.stars.toLocaleString()} ⭐, but can't produce them. Enter a value for 'Stars per Mountain'.</p>`);
-                    } else {
-                        steps.push(`<p>To get the required <strong class="text-yellow-400">${needed.stars.toLocaleString()} stars</strong>, you'll need to spawn ~<strong>${plan.numMountains.toLocaleString()} Mountains</strong>. This will cost <strong class="text-cyan-400">${plan.crystalsForMountains.toLocaleString()} crystals</strong>.</p>`);
-                    }
-                }
-
-                if (plan.totalCrystalsNeeded > 0) {
-                    if (crystalsPerDemon <= 0) {
-                        steps.push(`<p class="text-red-400">You need a total of ${plan.totalCrystalsNeeded.toLocaleString()} 💎, but can't produce them. Enter a value for 'Crystals per Demon'.</p>`);
-                    } else {
-                        steps.push(`<p>To cover the <strong class="text-cyan-400">${plan.totalCrystalsNeeded.toLocaleString()} crystals</strong> (for upgrades and spawning), you need to spawn ~<strong>${plan.numDemons.toLocaleString()} Demons</strong>. This will cost <strong class="text-orange-400">${plan.flamesForDemons.toLocaleString()} flames</strong> and <strong class="text-purple-400">${plan.orbsForDemons.toLocaleString()} orbs</strong>.</p>`);
-                    }
-                }
-
-                if (plan.totalFlamesNeeded > 0) {
-                    if (flamesPerNetherling <= 0) {
-                        steps.push(`<p class="text-red-400">You need a total of ${plan.totalFlamesNeeded.toLocaleString()} 🔥, but can't produce them. Enter a value for 'Flames per Netherling'.</p>`);
-                    } else {
-                        steps.push(`<p>For the <strong class="text-orange-400">${plan.totalFlamesNeeded.toLocaleString()} flames</strong> required, you must spawn ~<strong>${plan.numNetherlings.toLocaleString()} Netherlings</strong>, costing <strong class="text-purple-400">${plan.orbsForNetherlings.toLocaleString()} orbs</strong>.</p>`);
-                    }
-                }
-                
-                if (needed.orbs > 0) {
-                     steps.push(`<p>You also need an additional <strong class="text-purple-400">${needed.orbs.toLocaleString()} orbs</strong> directly for upgrades.</p>`);
-                }
-
-                if (steps.length > 0) {
-                    strategyTextEl.innerHTML = steps.join('');
-                } else {
-                    strategyTextEl.innerHTML = '<p>Select some upgrades and enter your production rates to see a step-by-step plan.</p>';
-                }
-            }
-
-
             function calculateTotals() {
+                // 1. Get gross upgrade costs from checked items
                 const grossTotals = upgradesData.reduce((acc, upgrade) => {
                     if (upgrade.needed) {
                         acc.orbs += upgrade.orbs || 0;
@@ -319,35 +218,109 @@
                     return acc;
                 }, { flames: 0, crystals: 0, stars: 0, orbs: 0 });
 
+                // 2. Get current inventory and production rates
                 const currentResources = {
                     orbs: parseInt(currentOrbsInput.value) || 0,
                     flames: parseInt(currentFlamesInput.value) || 0,
                     crystals: parseInt(currentCrystalsInput.value) || 0,
                     stars: parseInt(currentStarsInput.value) || 0,
                 };
+                const flamesPerNetherling = parseInt(flamesPerNetherlingInput.value) || 0;
+                const crystalsPerDemon = parseInt(crystalsPerDemonInput.value) || 0;
+                const starsPerMountain = parseInt(starsPerMountainInput.value) || 0;
 
-                const netUpgradeCost = {
-                    orbs: Math.max(0, grossTotals.orbs - currentResources.orbs),
-                    flames: Math.max(0, grossTotals.flames - currentResources.flames),
-                    crystals: Math.max(0, grossTotals.crystals - currentResources.crystals),
-                    stars: Math.max(0, grossTotals.stars - currentResources.stars),
-                };
+                // 3. --- Start backward calculation from STARS ---
+                const netStarsNeeded = Math.max(0, grossTotals.stars - currentResources.stars);
+                const mountainsToSpawn = (starsPerMountain > 0 && netStarsNeeded > 0) ? Math.ceil(netStarsNeeded / starsPerMountain) : 0;
+                const crystalCostForMountains = mountainsToSpawn * 12;
 
-                const spawnCosts = calculateAndDisplaySpawnCosts(netUpgradeCost);
+                // 4. --- Calculate CRYSTALS ---
+                const totalCrystalDemand = grossTotals.crystals + crystalCostForMountains;
+                const netCrystalsNeeded = Math.max(0, totalCrystalDemand - currentResources.crystals);
+                const demonsToSpawn = (crystalsPerDemon > 0 && netCrystalsNeeded > 0) ? Math.ceil(netCrystalsNeeded / crystalsPerDemon) : 0;
+                const flameCostForDemons = demonsToSpawn * 10;
+                const orbCostForDemons = demonsToSpawn * 3;
 
-                const finalTotals = {
-                    orbs: netUpgradeCost.orbs + spawnCosts.orbs,
-                    flames: netUpgradeCost.flames + spawnCosts.flames,
-                    crystals: netUpgradeCost.crystals + spawnCosts.crystals,
-                    stars: netUpgradeCost.stars + spawnCosts.stars,
-                };
+                // 5. --- Calculate FLAMES ---
+                const totalFlameDemand = grossTotals.flames + flameCostForDemons;
+                const netFlamesNeeded = Math.max(0, totalFlameDemand - currentResources.flames);
+                const netherlingsToSpawn = (flamesPerNetherling > 0 && netFlamesNeeded > 0) ? Math.ceil(netFlamesNeeded / flamesPerNetherling) : 0;
+                const orbCostForNetherlings = netherlingsToSpawn * 1;
 
-                totalsOrbsEl.textContent = finalTotals.orbs.toLocaleString();
-                totalsFlamesEl.textContent = finalTotals.flames.toLocaleString();
-                totalsCrystalsEl.textContent = finalTotals.crystals.toLocaleString();
-                totalsStarsEl.textContent = finalTotals.stars.toLocaleString();
+                // 6. --- Calculate ORBS ---
+                const totalOrbDemand = grossTotals.orbs + orbCostForDemons + orbCostForNetherlings;
+                const netOrbsNeeded = Math.max(0, totalOrbDemand - currentResources.orbs);
+                
+                // 7. --- Update UI ---
+                
+                // Final deficit display
+                totalsOrbsEl.textContent = netOrbsNeeded.toLocaleString();
+                totalsFlamesEl.textContent = netFlamesNeeded.toLocaleString();
+                totalsCrystalsEl.textContent = netCrystalsNeeded.toLocaleString();
+                totalsStarsEl.textContent = netStarsNeeded.toLocaleString();
 
-                generateStrategyText(netUpgradeCost);
+                // Spawn cost display
+                const totalSpawnCostOrbs = orbCostForDemons + orbCostForNetherlings;
+                spawnCostOrbsEl.textContent = totalSpawnCostOrbs.toLocaleString();
+                spawnCostFlamesEl.textContent = flameCostForDemons.toLocaleString();
+                spawnCostCrystalsEl.textContent = crystalCostForMountains.toLocaleString();
+                spawnCostStarsEl.textContent = '0';
+
+                // Plan of Action display
+                let steps = [];
+                const hasNeeds = grossTotals.flames || grossTotals.crystals || grossTotals.stars || grossTotals.orbs;
+                if (!hasNeeds) {
+                    strategyTextEl.innerHTML = '<p>Select some upgrades to get started.</p>';
+                    return;
+                }
+                
+                // Stars Plan
+                if (grossTotals.stars > 0) {
+                    if (starsPerMountain <= 0) {
+                        steps.push(`<p class="text-red-400">You need ${netStarsNeeded.toLocaleString()} ⭐, but can't produce them. Enter a value for 'Stars per Mountain'.</p>`);
+                    } else if (mountainsToSpawn > 0) {
+                         steps.push(`<p>Your upgrades require <strong class="text-yellow-400">${grossTotals.stars.toLocaleString()} stars</strong>. After using your current ${currentResources.stars.toLocaleString()}, you need <strong class="text-yellow-400">${netStarsNeeded.toLocaleString()} more</strong>. To get them, spawn ~<strong>${mountainsToSpawn.toLocaleString()} Mountains</strong>, costing <strong class="text-cyan-400">${crystalCostForMountains.toLocaleString()} crystals</strong>.</p>`);
+                    }
+                }
+
+                // Crystals Plan
+                if (totalCrystalDemand > 0) {
+                    if (crystalsPerDemon <= 0) {
+                        steps.push(`<p class="text-red-400">You need a total of ${netCrystalsNeeded.toLocaleString()} 💎, but can't produce them. Enter a value for 'Crystals per Demon'.</p>`);
+                    } else if (demonsToSpawn > 0) {
+                        let crystalReasoning = `Your upgrades require ${grossTotals.crystals.toLocaleString()}`;
+                        if (crystalCostForMountains > 0) {
+                            crystalReasoning += `, and spawning mountains costs ${crystalCostForMountains.toLocaleString()}`;
+                        }
+                        steps.push(`<p>Your total demand for crystals is <strong class="text-cyan-400">${totalCrystalDemand.toLocaleString()}</strong> (${crystalReasoning}). After using your current ${currentResources.crystals.toLocaleString()}, you need <strong class="text-cyan-400">${netCrystalsNeeded.toLocaleString()} more</strong>. To get them, spawn ~<strong>${demonsToSpawn.toLocaleString()} Demons</strong>, costing <strong class="text-orange-400">${flameCostForDemons.toLocaleString()} flames</strong> and <strong class="text-purple-400">${orbCostForDemons.toLocaleString()} orbs</strong>.</p>`);
+                    }
+                }
+
+                // Flames Plan
+                 if (totalFlameDemand > 0) {
+                    if (flamesPerNetherling <= 0) {
+                        steps.push(`<p class="text-red-400">You need a total of ${netFlamesNeeded.toLocaleString()} 🔥, but can't produce them. Enter a value for 'Flames per Netherling'.</p>`);
+                    } else if (netherlingsToSpawn > 0) {
+                        let flameReasoning = `Your upgrades require ${grossTotals.flames.toLocaleString()}`;
+                        if (flameCostForDemons > 0) {
+                            flameReasoning += `, and spawning demons costs ${flameCostForDemons.toLocaleString()}`;
+                        }
+                        steps.push(`<p>Your total demand for flames is <strong class="text-orange-400">${totalFlameDemand.toLocaleString()}</strong> (${flameReasoning}). After using your current ${currentResources.flames.toLocaleString()}, you need <strong class="text-orange-400">${netFlamesNeeded.toLocaleString()} more</strong>. To get them, spawn ~<strong>${netherlingsToSpawn.toLocaleString()} Netherlings</strong>, costing <strong class="text-purple-400">${orbCostForNetherlings.toLocaleString()} orbs</strong>.</p>`);
+                    }
+                }
+                
+                // Orbs Plan
+                if (totalOrbDemand > 0 && netOrbsNeeded > 0) {
+                     steps.push(`<p>Finally, your total orb demand is <strong class="text-purple-400">${totalOrbDemand.toLocaleString()}</strong>. After using your current ${currentResources.orbs.toLocaleString()}, you are short <strong class="text-purple-400">${netOrbsNeeded.toLocaleString()} orbs</strong>.</p>`);
+                }
+
+
+                if(steps.length > 0) {
+                    strategyTextEl.innerHTML = steps.join('');
+                } else {
+                     strategyTextEl.innerHTML = '<p>You have everything you need for the selected upgrades!</p>';
+                }
+
             }
 
             function renderUpgrades() {
@@ -425,5 +398,6 @@
     </script>
 </body>
 </html>
+
 
 
