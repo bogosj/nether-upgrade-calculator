@@ -51,19 +51,19 @@
                     <!-- Netherlings -->
                     <div class="bg-gray-700 p-4 rounded-lg">
                         <label for="flames-per-netherling" class="block text-sm font-medium text-gray-300 mb-2">Flames per Netherling</label>
-                        <input type="number" id="flames-per-netherling" class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500" placeholder="0" min="0">
+                        <input type="number" id="flames-per-netherling" value="8" class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500" placeholder="0" min="0">
                         <p class="text-xs text-gray-400 mt-2 text-center">Spawn Cost: 1 Orb</p>
                     </div>
                     <!-- Demons -->
                     <div class="bg-gray-700 p-4 rounded-lg">
                         <label for="crystals-per-demon" class="block text-sm font-medium text-gray-300 mb-2">Crystals per Demon</label>
-                        <input type="number" id="crystals-per-demon" class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500" placeholder="0" min="0">
+                        <input type="number" id="crystals-per-demon" value="5" class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500" placeholder="0" min="0">
                         <p class="text-xs text-gray-400 mt-2 text-center">Spawn Cost: 3 Orbs, 10 Flames</p>
                     </div>
                     <!-- Mountains -->
                     <div class="bg-gray-700 p-4 rounded-lg">
                         <label for="stars-per-mountain" class="block text-sm font-medium text-gray-300 mb-2">Stars per Mountain</label>
-                        <input type="number" id="stars-per-mountain" class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500" placeholder="0" min="0">
+                        <input type="number" id="stars-per-mountain" value="3" class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500" placeholder="0" min="0">
                         <p class="text-xs text-gray-400 mt-2 text-center">Spawn Cost: 12 Crystals</p>
                     </div>
                 </div>
@@ -115,7 +115,7 @@
         <!-- Totals Section -->
         <div class="bg-gray-800 shadow-lg rounded-xl p-6 mb-8 sticky top-4 z-10 border border-gray-700">
             <h2 class="text-xl font-semibold mb-4 text-white">Net Resources To Acquire</h2>
-            <div id="totals" class="grid grid-cols-2 sm-grid-cols-4 gap-4 text-center">
+            <div id="totals" class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
                 <div class="bg-gray-700 p-4 rounded-lg">
                     <span class="text-2xl font-bold text-purple-400" id="total-orbs">0</span>
                     <span class="block text-sm text-gray-300">Orbs</span>
@@ -143,7 +143,13 @@
         <!-- Strategy Section -->
         <div class="bg-gray-800 shadow-lg rounded-xl p-6 mt-8 border border-gray-700">
             <h2 class="text-xl font-semibold mb-4 text-white">Plan of Action</h2>
-            <div id="strategy-text" class="text-gray-300 space-y-2 prose prose-invert max-w-none">
+            <div id="strategy-summary-table" class="mb-6">
+                <!-- Summary table will be injected here -->
+            </div>
+             <div id="strategy-spawning-table" class="mb-6">
+                <!-- Spawning summary table will be injected here -->
+            </div>
+            <div id="strategy-text" class="text-gray-300 space-y-3 prose prose-invert max-w-none">
                 <p>Select some upgrades and enter your production rates to see a step-by-step plan.</p>
             </div>
         </div>
@@ -181,6 +187,8 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             const upgradesContainer = document.getElementById('upgrades-container');
+            const strategySummaryTableEl = document.getElementById('strategy-summary-table');
+            const strategySpawningTableEl = document.getElementById('strategy-spawning-table');
             const strategyTextEl = document.getElementById('strategy-text');
 
             // Total Needed Elements
@@ -266,59 +274,165 @@
                 spawnCostCrystalsEl.textContent = crystalCostForMountains.toLocaleString();
                 spawnCostStarsEl.textContent = '0';
 
-                // Plan of Action display
-                let steps = [];
-                const hasNeeds = grossTotals.flames || grossTotals.crystals || grossTotals.stars || grossTotals.orbs;
-                if (!hasNeeds) {
+                // --- PLAN OF ACTION ---
+                const neededUpgrades = upgradesData.filter(u => u.needed);
+                if (neededUpgrades.length === 0) {
+                    strategySummaryTableEl.innerHTML = '';
+                    strategySpawningTableEl.innerHTML = '';
                     strategyTextEl.innerHTML = '<p>Select some upgrades to get started.</p>';
                     return;
                 }
+
+                // Build Summary Table
+                let upgradeTableRows = neededUpgrades.map(u => `
+                    <tr class="border-b border-gray-700 hover:bg-gray-600">
+                        <th scope="row" class="px-4 py-3 font-medium text-gray-200 whitespace-nowrap">${u.category} - ${u.name}</th>
+                        <td class="px-4 py-3 text-purple-400">${u.orbs?.toLocaleString() || '0'}</td>
+                        <td class="px-4 py-3 text-orange-400">${u.flames?.toLocaleString() || '0'}</td>
+                        <td class="px-4 py-3 text-cyan-400">${u.crystals?.toLocaleString() || '0'}</td>
+                        <td class="px-4 py-3 text-yellow-400">${u.stars?.toLocaleString() || '0'}</td>
+                    </tr>
+                `).join('');
+
+                const summaryTableHtml = `
+                    <h3 class="text-lg font-semibold mb-4 text-white">Selected Upgrade Costs Summary</h3>
+                    <div class="overflow-x-auto relative rounded-lg border border-gray-700">
+                        <table class="w-full text-sm text-left text-gray-400">
+                            <thead class="text-xs text-gray-300 uppercase bg-gray-700">
+                                <tr>
+                                    <th scope="col" class="px-4 py-3">Upgrade</th>
+                                    <th scope="col" class="px-4 py-3">Orbs</th>
+                                    <th scope="col" class="px-4 py-3">Flames</th>
+                                    <th scope="col" class="px-4 py-3">Crystals</th>
+                                    <th scope="col" class="px-4 py-3">Stars</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${upgradeTableRows}
+                            </tbody>
+                            <tfoot class="font-semibold text-gray-200 bg-gray-700">
+                                <tr>
+                                    <th scope="row" class="px-4 py-3 text-base">Total Direct Cost</th>
+                                    <td class="px-4 py-3 text-purple-400">${grossTotals.orbs.toLocaleString()}</td>
+                                    <td class="px-4 py-3 text-orange-400">${grossTotals.flames.toLocaleString()}</td>
+                                    <td class="px-4 py-3 text-cyan-400">${grossTotals.crystals.toLocaleString()}</td>
+                                    <td class="px-4 py-3 text-yellow-400">${grossTotals.stars.toLocaleString()}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                `;
+                strategySummaryTableEl.innerHTML = summaryTableHtml;
+
+                // Build Spawning Table
+                const totalSpawns = netherlingsToSpawn + demonsToSpawn + mountainsToSpawn;
+                if (totalSpawns > 0) {
+                     const spawningTableHtml = `
+                        <h3 class="text-lg font-semibold mb-4 text-white">Spawning Costs Summary</h3>
+                        <div class="overflow-x-auto relative rounded-lg border border-gray-700">
+                            <table class="w-full text-sm text-left text-gray-400">
+                                <thead class="text-xs text-gray-300 uppercase bg-gray-700">
+                                    <tr>
+                                        <th scope="col" class="px-4 py-3">Creature</th>
+                                        <th scope="col" class="px-4 py-3">To Spawn</th>
+                                        <th scope="col" class="px-4 py-3">Orbs Cost</th>
+                                        <th scope="col" class="px-4 py-3">Flames Cost</th>
+                                        <th scope="col" class="px-4 py-3">Crystals Cost</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${netherlingsToSpawn > 0 ? `<tr class="border-b border-gray-700">
+                                        <th scope="row" class="px-4 py-3 font-medium text-gray-200">Netherlings</th>
+                                        <td class="px-4 py-3">${netherlingsToSpawn.toLocaleString()}</td>
+                                        <td class="px-4 py-3 text-purple-400">${orbCostForNetherlings.toLocaleString()}</td>
+                                        <td class="px-4 py-3 text-orange-400">0</td>
+                                        <td class="px-4 py-3 text-cyan-400">0</td>
+                                    </tr>` : ''}
+                                     ${demonsToSpawn > 0 ? `<tr class="border-b border-gray-700">
+                                        <th scope="row" class="px-4 py-3 font-medium text-gray-200">Demons</th>
+                                        <td class="px-4 py-3">${demonsToSpawn.toLocaleString()}</td>
+                                        <td class="px-4 py-3 text-purple-400">${orbCostForDemons.toLocaleString()}</td>
+                                        <td class="px-4 py-3 text-orange-400">${flameCostForDemons.toLocaleString()}</td>
+                                        <td class="px-4 py-3 text-cyan-400">0</td>
+                                    </tr>` : ''}
+                                     ${mountainsToSpawn > 0 ? `<tr class="border-b border-gray-700">
+                                        <th scope="row" class="px-4 py-3 font-medium text-gray-200">Mountains</th>
+                                        <td class="px-4 py-3">${mountainsToSpawn.toLocaleString()}</td>
+                                        <td class="px-4 py-3 text-purple-400">0</td>
+                                        <td class="px-4 py-3 text-orange-400">0</td>
+                                        <td class="px-4 py-3 text-cyan-400">${crystalCostForMountains.toLocaleString()}</td>
+                                    </tr>` : ''}
+                                </tbody>
+                                <tfoot class="font-semibold text-gray-200 bg-gray-700">
+                                    <tr>
+                                        <th scope="row" class="px-4 py-3 text-base">Total Spawn Cost</th>
+                                        <td class="px-4 py-3"></td>
+                                        <td class="px-4 py-3 text-purple-400">${totalSpawnCostOrbs.toLocaleString()}</td>
+                                        <td class="px-4 py-3 text-orange-400">${flameCostForDemons.toLocaleString()}</td>
+                                        <td class="px-4 py-3 text-cyan-400">${crystalCostForMountains.toLocaleString()}</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    `;
+                    strategySpawningTableEl.innerHTML = spawningTableHtml;
+                } else {
+                    strategySpawningTableEl.innerHTML = '';
+                }
+
+
+                // Build Written Plan
+                let steps = [];
+                const hasNeeds = grossTotals.flames || grossTotals.crystals || grossTotals.stars || grossTotals.orbs;
                 
-                // Stars Plan
-                if (grossTotals.stars > 0) {
-                    if (starsPerMountain <= 0) {
-                        steps.push(`<p class="text-red-400">You need ${netStarsNeeded.toLocaleString()} ⭐, but can't produce them. Enter a value for 'Stars per Mountain'.</p>`);
-                    } else if (mountainsToSpawn > 0) {
-                         steps.push(`<p>Your upgrades require <strong class="text-yellow-400">${grossTotals.stars.toLocaleString()} stars</strong>. After using your current ${currentResources.stars.toLocaleString()}, you need <strong class="text-yellow-400">${netStarsNeeded.toLocaleString()} more</strong>. To get them, spawn ~<strong>${mountainsToSpawn.toLocaleString()} Mountains</strong>, costing <strong class="text-cyan-400">${crystalCostForMountains.toLocaleString()} crystals</strong>.</p>`);
-                    }
+                // Step 1: Orbs (Foundation)
+                if (totalOrbDemand > 0) {
+                     if (netOrbsNeeded > 0) {
+                        steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 1: The Orb Shortage</strong>The entire plan requires a total of <strong class="text-purple-400">${totalOrbDemand.toLocaleString()} orbs</strong> for both direct upgrades and all spawning activities. After using your current ${currentResources.orbs.toLocaleString()}, you have a fundamental shortage of <strong class="text-purple-400">${netOrbsNeeded.toLocaleString()} orbs</strong> that must be acquired first.</p>`);
+                     } else {
+                        steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 1: Orbs Check</strong>Your total orb demand of <strong class="text-purple-400">${totalOrbDemand.toLocaleString()}</strong> is covered by your current inventory. No orb acquisition is needed.</p>`);
+                     }
                 }
 
-                // Crystals Plan
-                if (totalCrystalDemand > 0) {
-                    if (crystalsPerDemon <= 0) {
-                        steps.push(`<p class="text-red-400">You need a total of ${netCrystalsNeeded.toLocaleString()} 💎, but can't produce them. Enter a value for 'Crystals per Demon'.</p>`);
-                    } else if (demonsToSpawn > 0) {
-                        let crystalReasoning = `Your upgrades require ${grossTotals.crystals.toLocaleString()}`;
-                        if (crystalCostForMountains > 0) {
-                            crystalReasoning += `, and spawning mountains costs ${crystalCostForMountains.toLocaleString()}`;
-                        }
-                        steps.push(`<p>Your total demand for crystals is <strong class="text-cyan-400">${totalCrystalDemand.toLocaleString()}</strong> (${crystalReasoning}). After using your current ${currentResources.crystals.toLocaleString()}, you need <strong class="text-cyan-400">${netCrystalsNeeded.toLocaleString()} more</strong>. To get them, spawn ~<strong>${demonsToSpawn.toLocaleString()} Demons</strong>, costing <strong class="text-orange-400">${flameCostForDemons.toLocaleString()} flames</strong> and <strong class="text-purple-400">${orbCostForDemons.toLocaleString()} orbs</strong>.</p>`);
+                // Step 2: Flames
+                if (flamesPerNetherling <= 0 && netFlamesNeeded > 0) {
+                    steps.push(`<p class="text-red-400"><strong class="text-base text-indigo-300 block mb-1">Step 2: Generate Flames</strong>You need a total of ${netFlamesNeeded.toLocaleString()} 🔥, but can't produce them. Enter a value for 'Flames per Netherling'.</p>`);
+                } else if (netherlingsToSpawn > 0) {
+                    let flameReasoning = `${grossTotals.flames.toLocaleString()} for upgrades`;
+                    if (flameCostForDemons > 0) {
+                        flameReasoning += `, and ${flameCostForDemons.toLocaleString()} to spawn Demons`;
                     }
+                    steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 2: Generate Flames</strong>Your total demand for flames is <strong class="text-orange-400">${totalFlameDemand.toLocaleString()}</strong> (${flameReasoning}). After using your current ${currentResources.flames.toLocaleString()}, you need <strong class="text-orange-400">${netFlamesNeeded.toLocaleString()} more</strong>. To get them, you must spawn ~<strong>${netherlingsToSpawn.toLocaleString()} Netherlings</strong>, which will cost <strong class="text-purple-400">${orbCostForNetherlings.toLocaleString()} orbs</strong>.</p>`);
+                } else {
+                     steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 2: Generate Flames</strong>Your total flame demand of <strong class="text-orange-400">${totalFlameDemand.toLocaleString()}</strong> is covered by your current inventory. No Netherling spawning is needed.</p>`);
                 }
 
-                // Flames Plan
-                 if (totalFlameDemand > 0) {
-                    if (flamesPerNetherling <= 0) {
-                        steps.push(`<p class="text-red-400">You need a total of ${netFlamesNeeded.toLocaleString()} 🔥, but can't produce them. Enter a value for 'Flames per Netherling'.</p>`);
-                    } else if (netherlingsToSpawn > 0) {
-                        let flameReasoning = `Your upgrades require ${grossTotals.flames.toLocaleString()}`;
-                        if (flameCostForDemons > 0) {
-                            flameReasoning += `, and spawning demons costs ${flameCostForDemons.toLocaleString()}`;
-                        }
-                        steps.push(`<p>Your total demand for flames is <strong class="text-orange-400">${totalFlameDemand.toLocaleString()}</strong> (${flameReasoning}). After using your current ${currentResources.flames.toLocaleString()}, you need <strong class="text-orange-400">${netFlamesNeeded.toLocaleString()} more</strong>. To get them, spawn ~<strong>${netherlingsToSpawn.toLocaleString()} Netherlings</strong>, costing <strong class="text-purple-400">${orbCostForNetherlings.toLocaleString()} orbs</strong>.</p>`);
+                // Step 3: Crystals
+                if (crystalsPerDemon <= 0 && netCrystalsNeeded > 0) {
+                    steps.push(`<p class="text-red-400"><strong class="text-base text-indigo-300 block mb-1">Step 3: Generate Crystals</strong>You need a total of ${netCrystalsNeeded.toLocaleString()} 💎, but can't produce them. Enter a value for 'Crystals per Demon'.</p>`);
+                } else if (demonsToSpawn > 0) {
+                    let crystalReasoning = `${grossTotals.crystals.toLocaleString()} for upgrades`;
+                    if (crystalCostForMountains > 0) {
+                        crystalReasoning += `, and ${crystalCostForMountains.toLocaleString()} to spawn Mountains`;
                     }
-                }
-                
-                // Orbs Plan
-                if (totalOrbDemand > 0 && netOrbsNeeded > 0) {
-                     steps.push(`<p>Finally, your total orb demand is <strong class="text-purple-400">${totalOrbDemand.toLocaleString()}</strong>. After using your current ${currentResources.orbs.toLocaleString()}, you are short <strong class="text-purple-400">${netOrbsNeeded.toLocaleString()} orbs</strong>.</p>`);
+                    steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 3: Generate Crystals</strong>Your total demand for crystals is <strong class="text-cyan-400">${totalCrystalDemand.toLocaleString()}</strong> (${crystalReasoning}). After using your current ${currentResources.crystals.toLocaleString()}, you need <strong class="text-cyan-400">${netCrystalsNeeded.toLocaleString()} more</strong>. You'll need to spawn ~<strong>${demonsToSpawn.toLocaleString()} Demons</strong>, which will cost <strong class="text-orange-400">${flameCostForDemons.toLocaleString()} flames</strong> and <strong class="text-purple-400">${orbCostForDemons.toLocaleString()} orbs</strong>.</p>`);
+                } else {
+                     steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 3: Generate Crystals</strong>Your total crystal demand of <strong class="text-cyan-400">${totalCrystalDemand.toLocaleString()}</strong> is covered by your current inventory. No Demon spawning is needed.</p>`);
                 }
 
+                // Step 4: Stars
+                if (starsPerMountain <= 0 && netStarsNeeded > 0) {
+                    steps.push(`<p class="text-red-400"><strong class="text-base text-indigo-300 block mb-1">Step 4: Generate Stars</strong>You need ${netStarsNeeded.toLocaleString()} ⭐, but can't produce them. Enter a value for 'Stars per Mountain'.</p>`);
+                } else if (mountainsToSpawn > 0) {
+                     steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 4: Generate Stars</strong>Finally, your upgrades require <strong class="text-yellow-400">${grossTotals.stars.toLocaleString()} stars</strong>. After using your current ${currentResources.stars.toLocaleString()}, you still need <strong class="text-yellow-400">${netStarsNeeded.toLocaleString()} more</strong>. To produce these, spawn approximately <strong>${mountainsToSpawn.toLocaleString()} Mountains</strong> at a cost of <strong class="text-cyan-400">${crystalCostForMountains.toLocaleString()} crystals</strong>.</p>`);
+                } else {
+                    steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 4: Generate Stars</strong>Your upgrades require <strong class="text-yellow-400">${grossTotals.stars.toLocaleString()} stars</strong>. Your current inventory of ${currentResources.stars.toLocaleString()} is sufficient to cover this cost. No Mountain spawning is needed.</p>`)
+                }
 
                 if(steps.length > 0) {
-                    strategyTextEl.innerHTML = steps.join('');
-                } else {
-                     strategyTextEl.innerHTML = '<p>You have everything you need for the selected upgrades!</p>';
+                    strategyTextEl.innerHTML = `<h3 class="text-lg font-semibold mb-4 text-white">Execution Steps</h3>` + steps.join('');
+                } else if (hasNeeds) {
+                     strategyTextEl.innerHTML = '<h3 class="text-lg font-semibold mb-4 text-white">Execution Steps</h3><p>You have everything you need for the selected upgrades!</p>';
                 }
 
             }
@@ -398,6 +512,4 @@
     </script>
 </body>
 </html>
-
-
 
