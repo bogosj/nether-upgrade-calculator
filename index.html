@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,10 +12,12 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+
         .custom-checkbox:checked {
             background-color: #4f46e5;
             border-color: #4f46e5;
         }
+
         .custom-checkbox:checked::after {
             content: '✔';
             color: white;
@@ -23,21 +26,24 @@
             line-height: 1.25rem;
             font-size: 0.8rem;
         }
+
         /* Hide number input arrows */
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button {
             appearance: none;
             margin: 0;
         }
+
         input[type=number] {
             appearance: textfield;
         }
     </style>
 </head>
+
 <body class="bg-gray-900 text-white antialiased">
 
     <div class="container mx-auto p-4 sm:p-6 lg:p-8 max-w-5xl">
-        
+
         <!-- Header -->
         <header class="text-center mb-8">
             <h1 class="text-3xl sm:text-4xl font-bold text-indigo-400">Nether Resource Tracker</h1>
@@ -51,26 +57,35 @@
                 <div class="inline-grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6 text-left">
                     <!-- Netherlings -->
                     <div class="bg-gray-700 p-4 rounded-lg">
-                        <label for="flames-per-netherling" class="block text-sm font-medium text-gray-300 mb-2">Flames per Netherling</label>
-                        <input type="number" id="flames-per-netherling" value="8" class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500" placeholder="0" min="0">
+                        <label for="flames-per-netherling" class="block text-sm font-medium text-gray-300 mb-2">Flames
+                            per Netherling</label>
+                        <input type="number" id="flames-per-netherling" value="8"
+                            class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="0" min="0">
                         <p class="text-xs text-gray-400 mt-2 text-center">Spawn Cost: 1 Orb</p>
                     </div>
                     <!-- Demons -->
                     <div class="bg-gray-700 p-4 rounded-lg">
-                        <label for="crystals-per-demon" class="block text-sm font-medium text-gray-300 mb-2">Crystals per Demon</label>
-                        <input type="number" id="crystals-per-demon" value="5" class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500" placeholder="0" min="0">
+                        <label for="crystals-per-demon" class="block text-sm font-medium text-gray-300 mb-2">Crystals
+                            per Demon</label>
+                        <input type="number" id="crystals-per-demon" value="5"
+                            class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="0" min="0">
                         <p class="text-xs text-gray-400 mt-2 text-center">Spawn Cost: 3 Orbs, 10 Flames</p>
                     </div>
                     <!-- Mountains -->
                     <div class="bg-gray-700 p-4 rounded-lg">
-                        <label for="stars-per-mountain" class="block text-sm font-medium text-gray-300 mb-2">Stars per Mountain</label>
-                        <input type="number" id="stars-per-mountain" value="3" class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500" placeholder="0" min="0">
+                        <label for="stars-per-mountain" class="block text-sm font-medium text-gray-300 mb-2">Stars per
+                            Mountain</label>
+                        <input type="number" id="stars-per-mountain" value="3"
+                            class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="0" min="0">
                         <p class="text-xs text-gray-400 mt-2 text-center">Spawn Cost: 12 Crystals</p>
                     </div>
                 </div>
             </div>
             <h3 class="text-lg font-semibold mb-4 text-white">Total Spawn Cost:</h3>
-             <div id="spawn-costs" class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+            <div id="spawn-costs" class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
                 <div class="bg-gray-700 p-4 rounded-lg">
                     <span class="text-2xl font-bold text-purple-400" id="spawn-cost-orbs">0</span>
                     <span class="block text-sm text-gray-300">🔮 Orbs</span>
@@ -96,19 +111,27 @@
             <div id="current-resources" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div class="bg-gray-700 p-4 rounded-lg flex flex-col items-center">
                     <label for="current-orbs" class="block text-sm text-gray-300 mb-2">Orbs</label>
-                    <input type="number" id="current-orbs" class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500" placeholder="0" min="0">
+                    <input type="number" id="current-orbs"
+                        class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500"
+                        placeholder="0" min="0">
                 </div>
                 <div class="bg-gray-700 p-4 rounded-lg flex flex-col items-center">
-                     <label for="current-flames" class="block text-sm text-gray-300 mb-2">Flames</label>
-                     <input type="number" id="current-flames" class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500" placeholder="0" min="0">
+                    <label for="current-flames" class="block text-sm text-gray-300 mb-2">Flames</label>
+                    <input type="number" id="current-flames"
+                        class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500"
+                        placeholder="0" min="0">
                 </div>
                 <div class="bg-gray-700 p-4 rounded-lg flex flex-col items-center">
-                     <label for="current-crystals" class="block text-sm text-gray-300 mb-2">Crystals</label>
-                     <input type="number" id="current-crystals" class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500" placeholder="0" min="0">
+                    <label for="current-crystals" class="block text-sm text-gray-300 mb-2">Crystals</label>
+                    <input type="number" id="current-crystals"
+                        class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500"
+                        placeholder="0" min="0">
                 </div>
                 <div class="bg-gray-700 p-4 rounded-lg flex flex-col items-center">
-                     <label for="current-stars" class="block text-sm text-gray-300 mb-2">Stars</label>
-                     <input type="number" id="current-stars" class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500" placeholder="0" min="0">
+                    <label for="current-stars" class="block text-sm text-gray-300 mb-2">Stars</label>
+                    <input type="number" id="current-stars"
+                        class="bg-gray-900 text-white w-full rounded-md p-2 text-center font-bold text-lg border border-gray-600 focus:ring-indigo-500 focus:border-indigo-500"
+                        placeholder="0" min="0">
                 </div>
             </div>
         </div>
@@ -147,7 +170,7 @@
             <div id="strategy-summary-table" class="mb-6">
                 <!-- Summary table will be injected here -->
             </div>
-             <div id="strategy-spawning-table" class="mb-6">
+            <div id="strategy-spawning-table" class="mb-6">
                 <!-- Spawning summary table will be injected here -->
             </div>
             <div id="strategy-text" class="text-gray-300 space-y-3 prose prose-invert max-w-none">
@@ -215,7 +238,7 @@
             const currentFlamesInput = document.getElementById('current-flames');
             const currentCrystalsInput = document.getElementById('current-crystals');
             const currentStarsInput = document.getElementById('current-stars');
-            
+
             // Production Inputs
             const flamesPerNetherlingInput = document.getElementById('flames-per-netherling');
             const crystalsPerDemonInput = document.getElementById('crystals-per-demon');
@@ -226,7 +249,7 @@
             const spawnCostFlamesEl = document.getElementById('spawn-cost-flames');
             const spawnCostCrystalsEl = document.getElementById('spawn-cost-crystals');
             const spawnCostStarsEl = document.getElementById('spawn-cost-stars');
-            
+
             function saveState() {
                 const state = {
                     upgrades: upgradesData.map(u => ({ id: u.id, needed: u.needed })),
@@ -333,9 +356,9 @@
                 // 6. --- Calculate ORBS ---
                 const totalOrbDemand = grossTotals.orbs + orbCostForDemons + orbCostForNetherlings;
                 const netOrbsNeeded = Math.max(0, totalOrbDemand - currentResources.orbs);
-                
+
                 // 7. --- Update UI ---
-                
+
                 // Final deficit display
                 totalsOrbsEl.textContent = netOrbsNeeded.toLocaleString();
                 totalsFlamesEl.textContent = netFlamesNeeded.toLocaleString();
@@ -402,7 +425,7 @@
                 // Build Spawning Table
                 const totalSpawns = netherlingsToSpawn + demonsToSpawn + mountainsToSpawn;
                 if (totalSpawns > 0) {
-                     const spawningTableHtml = `
+                    const spawningTableHtml = `
                         <h3 class="text-lg font-semibold mb-4 text-white">Spawning Costs Summary</h3>
                         <div class="overflow-x-auto relative rounded-lg border border-gray-700">
                             <table class="w-full text-sm text-left text-gray-400">
@@ -459,14 +482,14 @@
                 // Build Written Plan
                 let steps = [];
                 const hasNeeds = grossTotals.flames || grossTotals.crystals || grossTotals.stars || grossTotals.orbs;
-                
+
                 // Step 1: Orbs (Foundation)
                 if (totalOrbDemand > 0) {
-                     if (netOrbsNeeded > 0) {
+                    if (netOrbsNeeded > 0) {
                         steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 1: The Orb Shortage</strong>The entire plan requires a total of <strong class="text-purple-400">${totalOrbDemand.toLocaleString()} orbs</strong> for both direct upgrades and all spawning activities. After using your current ${currentResources.orbs.toLocaleString()}, you have a fundamental shortage of <strong class="text-purple-400">${netOrbsNeeded.toLocaleString()} orbs</strong> that must be acquired first.</p>`);
-                     } else {
+                    } else {
                         steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 1: Orbs Check</strong>Your total orb demand of <strong class="text-purple-400">${totalOrbDemand.toLocaleString()}</strong> is covered by your current inventory. No orb acquisition is needed.</p>`);
-                     }
+                    }
                 }
 
                 // Step 2: Flames
@@ -479,7 +502,7 @@
                     }
                     steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 2: Generate Flames</strong>Your total demand for flames is <strong class="text-orange-400">${totalFlameDemand.toLocaleString()}</strong> (${flameReasoning}). After using your current ${currentResources.flames.toLocaleString()}, you need <strong class="text-orange-400">${netFlamesNeeded.toLocaleString()} more</strong>. To get them, you must spawn ~<strong>${netherlingsToSpawn.toLocaleString()} Netherlings</strong>, which will cost <strong class="text-purple-400">${orbCostForNetherlings.toLocaleString()} orbs</strong>.</p>`);
                 } else {
-                     steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 2: Generate Flames</strong>Your total flame demand of <strong class="text-orange-400">${totalFlameDemand.toLocaleString()}</strong> is covered by your current inventory. No Netherling spawning is needed.</p>`);
+                    steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 2: Generate Flames</strong>Your total flame demand of <strong class="text-orange-400">${totalFlameDemand.toLocaleString()}</strong> is covered by your current inventory. No Netherling spawning is needed.</p>`);
                 }
 
                 // Step 3: Crystals
@@ -492,32 +515,32 @@
                     }
                     steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 3: Generate Crystals</strong>Your total demand for crystals is <strong class="text-cyan-400">${totalCrystalDemand.toLocaleString()}</strong> (${crystalReasoning}). After using your current ${currentResources.crystals.toLocaleString()}, you need <strong class="text-cyan-400">${netCrystalsNeeded.toLocaleString()} more</strong>. You'll need to spawn ~<strong>${demonsToSpawn.toLocaleString()} Demons</strong>, which will cost <strong class="text-orange-400">${flameCostForDemons.toLocaleString()} flames</strong> and <strong class="text-purple-400">${orbCostForDemons.toLocaleString()} orbs</strong>.</p>`);
                 } else {
-                     steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 3: Generate Crystals</strong>Your total crystal demand of <strong class="text-cyan-400">${totalCrystalDemand.toLocaleString()}</strong> is covered by your current inventory. No Demon spawning is needed.</p>`);
+                    steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 3: Generate Crystals</strong>Your total crystal demand of <strong class="text-cyan-400">${totalCrystalDemand.toLocaleString()}</strong> is covered by your current inventory. No Demon spawning is needed.</p>`);
                 }
 
                 // Step 4: Stars
                 if (starsPerMountain <= 0 && netStarsNeeded > 0) {
                     steps.push(`<p class="text-red-400"><strong class="text-base text-indigo-300 block mb-1">Step 4: Generate Stars</strong>You need ${netStarsNeeded.toLocaleString()} ⭐, but can't produce them. Enter a value for 'Stars per Mountain'.</p>`);
                 } else if (mountainsToSpawn > 0) {
-                     steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 4: Generate Stars</strong>Finally, your upgrades require <strong class="text-yellow-400">${grossTotals.stars.toLocaleString()} stars</strong>. After using your current ${currentResources.stars.toLocaleString()}, you still need <strong class="text-yellow-400">${netStarsNeeded.toLocaleString()} more</strong>. To produce these, spawn approximately <strong>${mountainsToSpawn.toLocaleString()} Mountains</strong> at a cost of <strong class="text-cyan-400">${crystalCostForMountains.toLocaleString()} crystals</strong>.</p>`);
+                    steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 4: Generate Stars</strong>Finally, your upgrades require <strong class="text-yellow-400">${grossTotals.stars.toLocaleString()} stars</strong>. After using your current ${currentResources.stars.toLocaleString()}, you still need <strong class="text-yellow-400">${netStarsNeeded.toLocaleString()} more</strong>. To produce these, spawn approximately <strong>${mountainsToSpawn.toLocaleString()} Mountains</strong> at a cost of <strong class="text-cyan-400">${crystalCostForMountains.toLocaleString()} crystals</strong>.</p>`);
                 } else {
                     steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 4: Generate Stars</strong>Your upgrades require <strong class="text-yellow-400">${grossTotals.stars.toLocaleString()} stars</strong>. Your current inventory of ${currentResources.stars.toLocaleString()} is sufficient to cover this cost. No Mountain spawning is needed.</p>`)
                 }
 
-                                if(steps.length > 0) {
-                                    strategyTextEl.innerHTML = `<h3 class="text-lg font-semibold mb-4 text-white">Execution Steps</h3>` + steps.join('');
-                                } else if (hasNeeds) {
-                                     strategyTextEl.innerHTML = '<h3 class="text-lg font-semibold mb-4 text-white">Execution Steps</h3><p>You have everything you need for the selected upgrades!</p>';
-                                }
-                
-                                if (netOrbsNeeded > 0) {
-                                    const apocalypsesNeeded = Math.ceil(netOrbsNeeded / 25);
-                                    const apocalypseText = `<p class="mt-4 pt-4 border-t border-gray-700 text-sm text-gray-400">Assuming you get 25 orbs per apocalypse, this will take an additional <strong class="text-purple-300">${apocalypsesNeeded.toLocaleString()}</strong> apocalypses.</p>`;
-                                    strategyTextEl.innerHTML += apocalypseText;
-                                }
-                
-                                saveState();
-                            }
+                if (steps.length > 0) {
+                    strategyTextEl.innerHTML = `<h3 class="text-lg font-semibold mb-4 text-white">Execution Steps</h3>` + steps.join('');
+                } else if (hasNeeds) {
+                    strategyTextEl.innerHTML = '<h3 class="text-lg font-semibold mb-4 text-white">Execution Steps</h3><p>You have everything you need for the selected upgrades!</p>';
+                }
+
+                if (netOrbsNeeded > 0) {
+                    const apocalypsesNeeded = Math.ceil(netOrbsNeeded / 25);
+                    const apocalypseText = `<p class="mt-4 pt-4 border-t border-gray-700 text-sm text-gray-400">Assuming you get 25 orbs per apocalypse, this will take an additional <strong class="text-purple-300">${apocalypsesNeeded.toLocaleString()}</strong> apocalypses.</p>`;
+                    strategyTextEl.innerHTML += apocalypseText;
+                }
+
+                saveState();
+            }
             function renderUpgrades() {
                 // Group upgrades by category
                 const groupedUpgrades = upgradesData.reduce((acc, upgrade) => {
@@ -533,7 +556,7 @@
                 for (const category in groupedUpgrades) {
                     const categoryContainer = document.createElement('div');
                     categoryContainer.className = 'bg-gray-800 shadow-lg rounded-xl border border-gray-700';
-                    
+
                     const categoryHeader = document.createElement('h3');
                     categoryHeader.className = 'text-lg font-semibold text-indigo-300 p-4 border-b border-gray-700';
                     categoryHeader.textContent = category;
@@ -541,11 +564,11 @@
 
                     const list = document.createElement('ul');
                     list.className = 'divide-y divide-gray-700';
-                    
+
                     groupedUpgrades[category].forEach(upgrade => {
                         const item = document.createElement('li');
                         item.className = 'flex items-center justify-between p-4 flex-wrap';
-                        
+
                         item.innerHTML = `
                             <div class="flex items-center mb-2 sm:mb-0">
                                 <input type="checkbox" id="upgrade-${upgrade.id}" data-id="${upgrade.id}" class="custom-checkbox appearance-none w-5 h-5 rounded border-2 border-gray-500 bg-gray-600 transition-all duration-200 cursor-pointer" ${upgrade.needed ? 'checked' : ''}>
@@ -565,7 +588,7 @@
                     upgradesContainer.appendChild(categoryContainer);
                 }
             }
-            
+
             upgradesContainer.addEventListener('change', (e) => {
                 if (e.target.type === 'checkbox') {
                     const upgradeId = parseInt(e.target.dataset.id);
@@ -593,5 +616,5 @@
         });
     </script>
 </body>
-</html>
 
+</html>
