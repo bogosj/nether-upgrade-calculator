@@ -504,15 +504,20 @@
                     steps.push(`<p><strong class="text-base text-indigo-300 block mb-1">Step 4: Generate Stars</strong>Your upgrades require <strong class="text-yellow-400">${grossTotals.stars.toLocaleString()} stars</strong>. Your current inventory of ${currentResources.stars.toLocaleString()} is sufficient to cover this cost. No Mountain spawning is needed.</p>`)
                 }
 
-                if(steps.length > 0) {
-                    strategyTextEl.innerHTML = `<h3 class="text-lg font-semibold mb-4 text-white">Execution Steps</h3>` + steps.join('');
-                } else if (hasNeeds) {
-                    strategyTextEl.innerHTML = '<h3 class="text-lg font-semibold mb-4 text-white">Execution Steps</h3><p>You have everything you need for the selected upgrades!</p>';
-                }
-
-                saveState();
-            }
-
+                                if(steps.length > 0) {
+                                    strategyTextEl.innerHTML = `<h3 class="text-lg font-semibold mb-4 text-white">Execution Steps</h3>` + steps.join('');
+                                } else if (hasNeeds) {
+                                     strategyTextEl.innerHTML = '<h3 class="text-lg font-semibold mb-4 text-white">Execution Steps</h3><p>You have everything you need for the selected upgrades!</p>';
+                                }
+                
+                                if (netOrbsNeeded > 0) {
+                                    const apocalypsesNeeded = Math.ceil(netOrbsNeeded / 25);
+                                    const apocalypseText = `<p class="mt-4 pt-4 border-t border-gray-700 text-sm text-gray-400">Assuming you get 25 orbs per apocalypse, this will take an additional <strong class="text-purple-300">${apocalypsesNeeded.toLocaleString()}</strong> apocalypses.</p>`;
+                                    strategyTextEl.innerHTML += apocalypseText;
+                                }
+                
+                                saveState();
+                            }
             function renderUpgrades() {
                 // Group upgrades by category
                 const groupedUpgrades = upgradesData.reduce((acc, upgrade) => {
