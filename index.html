@@ -157,6 +157,7 @@
                     <span class="block text-sm text-gray-300">⭐ Stars</span>
                 </div>
             </div>
+            <div id="apocalypse-note" class="mt-4 pt-4 text-center border-t border-gray-700"></div>
         </div>
 
         <!-- Upgrades List -->
@@ -226,6 +227,7 @@
             const strategySummaryTableEl = document.getElementById('strategy-summary-table');
             const strategySpawningTableEl = document.getElementById('strategy-spawning-table');
             const strategyTextEl = document.getElementById('strategy-text');
+            const apocalypseNoteEl = document.getElementById('apocalypse-note');
 
             // Total Needed Elements
             const totalsOrbsEl = document.getElementById('total-orbs');
@@ -535,8 +537,9 @@
 
                 if (netOrbsNeeded > 0) {
                     const apocalypsesNeeded = Math.ceil(netOrbsNeeded / 25);
-                    const apocalypseText = `<p class="mt-4 pt-4 border-t border-gray-700 text-sm text-gray-400">Assuming you get 25 orbs per apocalypse, this will take an additional <strong class="text-purple-300">${apocalypsesNeeded.toLocaleString()}</strong> apocalypses.</p>`;
-                    strategyTextEl.innerHTML += apocalypseText;
+                    apocalypseNoteEl.innerHTML = `<p class="text-sm text-gray-400">Assuming 25 orbs per apocalypse, this will take an additional <strong class="text-purple-300">${apocalypsesNeeded.toLocaleString()}</strong> apocalypses.</p>`;
+                } else {
+                    apocalypseNoteEl.innerHTML = '';
                 }
 
                 saveState();
