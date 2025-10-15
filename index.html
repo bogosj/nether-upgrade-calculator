@@ -227,6 +227,68 @@
             const spawnCostCrystalsEl = document.getElementById('spawn-cost-crystals');
             const spawnCostStarsEl = document.getElementById('spawn-cost-stars');
             
+            function saveState() {
+                const state = {
+                    upgrades: upgradesData.map(u => ({ id: u.id, needed: u.needed })),
+                    inputs: {
+                        orbs: currentOrbsInput.value,
+                        flames: currentFlamesInput.value,
+                        crystals: currentCrystalsInput.value,
+                        stars: currentStarsInput.value,
+                        flamesPerNetherling: flamesPerNetherlingInput.value,
+                        crystalsPerDemon: crystalsPerDemonInput.value,
+                        starsPerMountain: starsPerMountainInput.value,
+                    }
+                };
+
+                const stateStr = JSON.stringify(state);
+                localStorage.setItem('netherUpgradeState', stateStr);
+                try {
+                    window.location.hash = btoa(stateStr);
+                } catch (e) {
+                    console.error("Failed to set hash:", e);
+                }
+            }
+
+            function loadState() {
+                let stateStr;
+                if (window.location.hash.length > 1) {
+                    try {
+                        stateStr = atob(window.location.hash.substring(1));
+                    } catch (e) {
+                        console.error("Failed to decode state from hash:", e);
+                        stateStr = localStorage.getItem('netherUpgradeState');
+                    }
+                } else {
+                    stateStr = localStorage.getItem('netherUpgradeState');
+                }
+
+                if (stateStr) {
+                    try {
+                        const state = JSON.parse(stateStr);
+                        if (state.upgrades) {
+                            state.upgrades.forEach(savedUpgrade => {
+                                const upgrade = upgradesData.find(u => u.id === savedUpgrade.id);
+                                if (upgrade) {
+                                    upgrade.needed = savedUpgrade.needed;
+                                }
+                            });
+                        }
+                        if (state.inputs) {
+                            currentOrbsInput.value = state.inputs.orbs || '';
+                            currentFlamesInput.value = state.inputs.flames || '';
+                            currentCrystalsInput.value = state.inputs.crystals || '';
+                            currentStarsInput.value = state.inputs.stars || '';
+                            flamesPerNetherlingInput.value = state.inputs.flamesPerNetherling || '8';
+                            crystalsPerDemonInput.value = state.inputs.crystalsPerDemon || '5';
+                            starsPerMountainInput.value = state.inputs.starsPerMountain || '3';
+                        }
+                    } catch (e) {
+                        console.error("Failed to parse state:", e);
+                    }
+                }
+            }
+
             function calculateTotals() {
                 // 1. Get gross upgrade costs from checked items
                 const grossTotals = upgradesData.reduce((acc, upgrade) => {
@@ -445,9 +507,10 @@
                 if(steps.length > 0) {
                     strategyTextEl.innerHTML = `<h3 class="text-lg font-semibold mb-4 text-white">Execution Steps</h3>` + steps.join('');
                 } else if (hasNeeds) {
-                     strategyTextEl.innerHTML = '<h3 class="text-lg font-semibold mb-4 text-white">Execution Steps</h3><p>You have everything you need for the selected upgrades!</p>';
+                    strategyTextEl.innerHTML = '<h3 class="text-lg font-semibold mb-4 text-white">Execution Steps</h3><p>You have everything you need for the selected upgrades!</p>';
                 }
 
+                saveState();
             }
 
             function renderUpgrades() {
@@ -519,6 +582,7 @@
             });
 
             // Initial setup
+            loadState();
             renderUpgrades();
             calculateTotals();
         });
