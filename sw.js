@@ -1,11 +1,9 @@
-const cacheName = 'nether-tracker-v2';
+const cacheName = 'nether-tracker-v3';
 const assets = [
   '/',
   '/index.html',
   '/favicon.png',
   '/manifest.json',
-  'https://cdn.tailwindcss.com',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
 ];
 
 self.addEventListener('install', installEvent => {
@@ -18,8 +16,16 @@ self.addEventListener('install', installEvent => {
 
 self.addEventListener('fetch', fetchEvent => {
   fetchEvent.respondWith(
-    caches.match(fetchEvent.request).then(res => {
-      return res || fetch(fetchEvent.request);
+    caches.open(cacheName).then(cache => {
+      return cache.match(fetchEvent.request).then(response => {
+        const fetchPromise = fetch(fetchEvent.request).then(networkResponse => {
+          if (networkResponse.status === 200) {
+            cache.put(fetchEvent.request, networkResponse.clone());
+          }
+          return networkResponse;
+        });
+        return response || fetchPromise;
+      });
     })
   );
 });
