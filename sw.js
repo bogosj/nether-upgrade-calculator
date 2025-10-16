@@ -16,16 +16,18 @@ self.addEventListener('install', installEvent => {
 
 self.addEventListener('fetch', fetchEvent => {
   fetchEvent.respondWith(
-    caches.open(cacheName).then(cache => {
-      return cache.match(fetchEvent.request).then(response => {
-        const fetchPromise = fetch(fetchEvent.request).then(networkResponse => {
-          if (networkResponse.status === 200) {
-            cache.put(fetchEvent.request, networkResponse.clone());
-          }
-          return networkResponse;
-        });
-        return response || fetchPromise;
+    fetch(fetchEvent.request).then(networkResponse => {
+      // If fetch is successful, update the cache
+      return caches.open(cacheName).then(cache => {
+        // It's a good practice to only cache successful responses.
+        if (networkResponse.status === 200) {
+          cache.put(fetchEvent.request, networkResponse.clone());
+        }
+        return networkResponse;
       });
+    }).catch(() => {
+      // If fetch fails (e.g., offline), try to get the response from the cache.
+      return caches.match(fetchEvent.request);
     })
   );
 });
