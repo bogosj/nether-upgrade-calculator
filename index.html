@@ -539,20 +539,40 @@
                     categoryContainer.className = 'bg-gray-800 shadow-lg rounded-xl border border-gray-700';
 
                     const categoryHeader = document.createElement('h3');
-                    categoryHeader.className = 'text-lg font-semibold text-indigo-300 p-4 border-b border-gray-700';
-                    categoryHeader.textContent = category;
-                    categoryContainer.appendChild(categoryHeader);
+                    categoryHeader.className = 'flex justify-between items-center p-4 border-b border-gray-700 flex-wrap gap-2';
+
+                    const upgradesInCategory = groupedUpgrades[category];
+                    const totalInCategory = upgradesInCategory.length;
+                    const checkedInCategory = upgradesInCategory.filter(u => u.needed).length;
+
+                    categoryHeader.innerHTML = `
+                        <h3 class="text-lg font-semibold text-indigo-300">${category}</h3>
+                        <div class="flex items-center space-x-3">
+                            <span class="text-sm text-gray-400" data-counter-category="${category}">${checkedInCategory}/${totalInCategory}</span>
+                            <button data-action="select-all" data-category="${category}" class="text-xs px-2 py-1 bg-indigo-600 hover:bg-indigo-700 rounded transition-colors">All</button>
+                            <button data-action="deselect-all" data-category="${category}" class="text-xs px-2 py-1 bg-gray-600 hover:bg-gray-500 rounded transition-colors">None</button>
+                        </div>
+                    `;
+
+                     categoryContainer.appendChild(categoryHeader);
 
                     const list = document.createElement('ul');
                     list.className = 'divide-y divide-gray-700';
 
-                    groupedUpgrades[category].forEach(upgrade => {
+                    upgradesInCategory.forEach(upgrade => {
                         const item = document.createElement('li');
                         item.className = 'flex items-center justify-between p-4 flex-wrap';
 
                         item.innerHTML = `
                             <div class="flex items-center mb-2 sm:mb-0">
-                                <input type="checkbox" id="upgrade-${upgrade.id}" data-id="${upgrade.id}" class="custom-checkbox appearance-none w-5 h-5 rounded border-2 border-gray-500 bg-gray-600 transition-all duration-200 cursor-pointer" ${upgrade.needed ? 'checked' : ''}>
+                                <input 
+                                    type="checkbox" 
+                                    id="upgrade-${upgrade.id}" 
+                                    data-id="${upgrade.id}" 
+                                    data-category="${upgrade.category}"
+                                    class="custom-checkbox appearance-none w-5 h-5 rounded border-2 border-gray-500 bg-gray-600 transition-all duration-200 cursor-pointer" 
+                                    ${upgrade.needed ? 'checked' : ''}
+                                >
                                 <label for="upgrade-${upgrade.id}" class="ml-4 text-gray-200 cursor-pointer">${upgrade.name}</label>
                             </div>
                             <div class="flex items-center space-x-4 text-sm w-full sm:w-auto justify-end">
@@ -570,12 +590,46 @@
                 }
             }
 
+            function updateCategoryCounter(category) {
+                const counterEl = document.querySelector(`[data-counter-category="${category}"]`);
+                if (counterEl) {
+                    const upgradesInCategory = upgradesData.filter(u => u.category === category);
+                    const totalInCategory = upgradesInCategory.length;
+                    const checkedInCategory = upgradesInCategory.filter(u => u.needed).length;
+                    counterEl.textContent = `${checkedInCategory}/${totalInCategory}`;
+                }
+            }
+
             upgradesContainer.addEventListener('change', (e) => {
                 if (e.target.type === 'checkbox') {
                     const upgradeId = parseInt(e.target.dataset.id);
+                    const category = e.target.dataset.category;
                     const upgrade = upgradesData.find(u => u.id === upgradeId);
                     if (upgrade) {
                         upgrade.needed = e.target.checked;
+                        updateCategoryCounter(category);
+                        calculateTotals();
+                    }
+                }
+            });
+
+            upgradesContainer.addEventListener('click', (e) => {
+                const button = e.target.closest('button[data-action]');
+                if (button) {
+                    const action = button.dataset.action;
+                    const category = button.dataset.category;
+                    const shouldBeNeeded = action === 'select-all';
+
+                    const upgradesInCategory = upgradesData.filter(u => u.category === category);
+                    upgradesInCategory.forEach(upgrade => {
+                        upgrade.needed = shouldBeNeeded;
+                    });
+
+                    // Re-render to update all checkboxes at once
+                    renderUpgrades();
+                    
+                    // Recalculate totals after the state has been updated
+                    if (upgradesInCategory.length > 0) {
                         calculateTotals();
                     }
                 }
